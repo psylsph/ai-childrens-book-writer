@@ -4,40 +4,39 @@ This project consists of two main Python scripts: `app.py` and `text-to-speech.p
 
 ## `app.py`
 
-This script uses the `pydantic-ai` library to generate a multi-chapter book. It leverages different language models (currently configured for Gemini and a local Ollama model) to perform the following steps:
+This script uses the `pydantic-ai` library to generate a multi-chapter book. It leverages different language models (currently configured for Gemini) to perform the following steps:
 
-1. **Planning:** An `Agent` is used to create a detailed outline for the book, defining the structure and key elements of each chapter. The outline is based on an initial prompt provided in `story_prose.md`.
-2. **Writing:** Another `Agent` takes the generated outline and writes the content for each chapter, ensuring a minimum word count and adherence to the plot. The generated book is saved to a file named `book-[model_name].md`.
-3. **Summarization:** A third `Agent` creates summaries for each chapter, which are saved to `summary-[model_name].md`.
+1. **Planning:** An `Agent` is used to create a detailed outline for the book. The outline is based on an initial prompt provided in `story_prose.md`. If a plan file (`plan-[model_name].md`) already exists, it will load the existing plan.
+2. **Writing:** Another `Agent` takes the generated outline and writes the content for each chapter, ensuring a minimum word count. The generated book is saved to `book-[model_name].md`. If a book file already exists, it will load the existing book content.
+3. **Summarization:** A third `Agent` creates short summaries (around 20 words) for each chapter, intended for AI image generation. These summaries are saved to `summary-[model_name].md`.
 
 The script uses environment variables (loaded from a `.env` file) for API keys and model configurations.
 
 ## `text-to-speech.py`
 
-This script takes a text file (`book.md`) and converts it into an audiobook. It performs the following actions:
+This script converts a text file into an audiobook using an external text-to-speech service. It performs the following actions:
 
-1. **Text Chunking:** The script splits the input text into smaller, manageable chunks, ensuring that splits occur at spaces to maintain word integrity.
-2. **TTS Model Loading:** It downloads a pre-trained text-to-speech model from Silero AI if it doesn't already exist locally (`model.pt`).
-3. **Speech Generation:** It iterates through the text chunks and uses the loaded model to generate speech audio for each chunk.
-4. **Audio Combination:** The generated audio chunks are combined into a single audio file (`audio_book.mp4`).
+1. **Text Chunking:** The script splits the input text (from `runs/llama-70b/book.txt`) into smaller chunks of 500 characters.
+2. **Speech Generation:** It uses the `stream_elements.requestTTS` function to generate speech audio for each chunk.
+3. **Audio Combination:** The generated audio chunks are combined into a single MP3 audio file (`audio_book.mp3`).
 
 ## Workflow
 
-The intended workflow is to first run `app.py` to generate the book content. The output of this script (`book.md`) can then be used as the input for `text-to-speech.py` to create an audiobook version.
+The intended workflow is to first run `app.py` to generate the book content. The output of this script (`book-[model_name].md`) can then be used conceptually as input, although `text-to-speech.py` currently reads from a specific file (`runs/llama-70b/book.txt`). Running `text-to-speech.py` will create an audiobook version of the specified book.
 
 ## Requirements
 
 - Python 3.6+
-- Required Python packages: `pydantic-ai`, `torch`, `pydub`, `python-dotenv`. Install them using:
+- Required Python packages: `pydantic-ai`, `pydub`, `python-dotenv`, `pyt2s`. Install them using:
   ```bash
-  pip install pydantic-ai torch pydub python-dotenv
+  pip install pydantic-ai pydub python-dotenv pyt2s
   ```
 - For `app.py`, you may need API keys for the language models you intend to use (e.g., Gemini). These should be set as environment variables in a `.env` file.
-- For `text-to-speech.py`, ensure you have a `book.md` file with the text you want to convert to speech.
+- For `text-to-speech.py`, the script currently expects the book content to be in `runs/llama-70b/book.txt`.
 
 ## Model
 
-The `text-to-speech.py` script downloads a pre-trained Silero TTS model (`model.pt`).
+The `text-to-speech.py` script uses an external service for text-to-speech conversion.
 
 ## Usage
 
@@ -45,11 +44,11 @@ The `text-to-speech.py` script downloads a pre-trained Silero TTS model (`model.
    ```bash
    python app.py
    ```
-   This will generate the book content and save it to `book-[model_name].md`.
+   This will generate the book content and save it to `book-[model_name].md`, and the plan to `plan-[model_name].md`, and summaries to `summary-[model_name].md`.
 
 2. **Generate Audiobook:**
-   - Ensure that the `book.md` file exists (you may need to rename the output of `app.py`).
+   - Ensure that the book content you wish to convert is located in `runs/llama-70b/book.txt`.
    ```bash
    python text-to-speech.py
    ```
-   This will create an audiobook file named `audio_book.mp4`.
+   This will create an audiobook file named `audio_book.mp3`.
