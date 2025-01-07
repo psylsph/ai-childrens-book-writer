@@ -1,33 +1,50 @@
-# Import TTS
-#from TTS.api import TTS
-
-# Initialize the TTS model (Tacotron2 + HiFi-GAN)
-#tts = TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC", progress_bar=True, gpu=False)
-
-book_text = open("book.txt", "r").read()
-# Generate speech from text
-#tts.tts_to_file(text=book, file_path="output.wav")
-
-
+import shutil
 import os
-import torch
+from pydub import AudioSegment
+from pyt2s.services import stream_elements
 
-device = torch.device('cpu')
-torch.set_num_threads(4)
-local_file = 'model.pt'
+def split_string_at_spaces(text, chunk_size=1000):
+    """
+    Splits a string into chunks of specified size, ensuring splits occur at spaces.
+    
+    Args:
+        text (str): The input string to split
+        chunk_size (int): Maximum size of each chunk (default: 1000)
+        
+    Returns:
+        list: List of string chunks
+    """
+    chunks = []
+    while len(text) > chunk_size:
+        # Find the last space within the chunk size
+        split_at = text.rfind(' ', 0, chunk_size)
+        
+        # If no space found, force split at chunk_size
+        if split_at == -1:
+            split_at = chunk_size
+            
+        chunks.append(text[:split_at].strip())
+        text = text[split_at:].strip()
+    
+    # Add the remaining text
+    if text:
+        chunks.append(text)
+        
+    return chunks
 
-if not os.path.isfile(local_file):
-    torch.hub.download_url_to_file('https://models.silero.ai/models/tts/en/v3_en.pt',
-                                   local_file)  
+book_text = open("runs/llama-70b/book.txt", "r").read()
 
-model = torch.package.PackageImporter(local_file).load_pickle("tts_models", "model")
-model.to(device)
+text_as_chunks = split_string_at_spaces(book_text,500)
 
-example_text = "Matthew's room was a sanctuary of tranquility, adorned with posters of his favorite video games and superheroes. The warm, inviting glow of his computer screen bathed the space in a soft, incandescent light as Matthew, a thirteen-year-old boy with a mop of unruly brown hair, stared unblinkingly at his Minecraft world. A world he had painstakingly crafted over years, pixel by pixel."
-sample_rate = 48000
-speaker='en_10'
-
-audio_paths = model.save_wav(text=book_text,
-                             speaker=speaker,
-                             sample_rate=sample_rate)
-print(audio_paths)
+for i, text in enumerate(text_as_chunks):
+    data = stream_elements.requestTTS(text)
+    with open('test.mp3', '+wb') as file:
+        file.write(data)
+    if i == 0:
+        shutil.move("test.mp3", "audio_book.mp3")
+    else:
+        final_wav = AudioSegment.from_file("audio_book.mp3", "mp3")
+        current_chunk = AudioSegment.from_file("test.mp3", format="mp3")
+        combined_sounds = final_wav + current_chunk
+        combined_sounds.export("audio_book.mp3", format="mp3")
+os.remove("test.mp3")

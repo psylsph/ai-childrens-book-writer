@@ -1,2 +1,10 @@
 .venv
 .env
+*.wav
+*.mp3
+*.mp4
+book*.*
+plan*.*
+summary*.*
+runs
+*.pt

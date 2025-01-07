@@ -1,5 +1,4 @@
 pydantic-ai-slim[openai]
 pydantic-ai-slim[groq]
 python_dotenv
-torchaudio
-omegaconf
+pyt2s
