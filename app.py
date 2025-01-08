@@ -18,17 +18,15 @@ load_dotenv()
 #     api_key=DEEPSEEK_API_KEY,
 # )
 
+#GEMINI_API_KEY= os.getenv("GEMINI_API_KEY")
+#model = GeminiModel('gemini-2.0-flash-exp', api_key=GEMINI_API_KEY)
 
-GEMINI_API_KEY= os.getenv("GEMINI_API_KEY")
-
-model = GeminiModel('gemini-2.0-flash-exp', api_key=GEMINI_API_KEY)
-
-# OLLAMA_API_KEY= os.getenv("OLLAMA_API_KEY")
-# model = OpenAIModel(
-#     'phi4-32768',
-#     base_url='http://localhost:11434/v1',
-#     api_key=OLLAMA_API_KEY,
-# )
+OLLAMA_API_KEY= os.getenv("OLLAMA_API_KEY")
+model = OpenAIModel(
+     'Darkest-muse-v1-32768',
+     base_url='http://localhost:11434/v1',
+     api_key=OLLAMA_API_KEY,
+ )
 
 num_chapters = 7
 initial_prompt = open("story_prose.md").read()
@@ -111,7 +109,7 @@ else:
                 3. World-Building: Incorporate detailed descriptions of the setting and environment to enrich the world-building. This should enhance the reader's immersion without slowing down the pace of the narrative.
                 4. Engaging Prose: Write in a style that is both engaging and descriptive, drawing the reader into the scene and making it feel real.
                 5. Complete Scenes: Make sure that each chapter is a complete narrative unit with a clear beginning, middle, and end. Do not leave scenes hanging or unresolved.
-                6. Word Count Requirement: Each chapter MUST be at least 2000 words. This is a hard requirement. If the output is shorter, continue writing until the minimum length is reached.
+                6. Word Count Requirement: Each chapter MUST be at least 2000 words (30000 chracters). This is a hard requirement. If the output is shorter, continue writing until the minimum length is reached.
                 7. Smooth Transitions: Ensure that transitions between scenes and chapters are smooth and logically flowing, maintaining the story's momentum.
                 8. Detailed Descriptions: Add detailed descriptions of the environment and characters where appropriate, but avoid info-dumping. Balance is key.
                 9. Reference the Outline and Previous Content: Always refer back to the plot outline and previous chapters to maintain consistency and continuity.
@@ -131,7 +129,7 @@ else:
                 print(f"##########################################################################################################################")
                 print(f"{chapter_outlines[chapter_num]}")
                 writer_result = writer.run_sync(f"""
-                    For the chapter outlined in the following Chapter Outline please write a 2000 chapter usingcovering all of the scenes.
+                    For the chapter outlined in the following Chapter Outline please write a 2000 chapter covering all of the scenes.
                     Ensure each of the scene flows from one to the next. If you first attempt does not have 2000 words try again.
                     Chapter Outline: {chapter_outlines[chapter_num]}""")
                 print(writer_result.data)

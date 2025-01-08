@@ -2,6 +2,21 @@
 
 This project consists of two main Python scripts: `app.py` and `text-to-speech.py`.
 
+Current Best Models
+* gemini-2.0-flash-exp
+* Darkest-muse-v1-32768
+* llama-3.1-70b-versatile
+* DeekSeek v3
+* llama3.1-7b
+
+Poor Models
+* Gemma-2-Ataraxy-32768:latest , fails length requirements
+* phi4-32768
+* alphawriter-32768
+
+
+Going down the list to test https://eqbench.com/creative_writing.html
+
 ## `app.py`
 
 This script uses the `pydantic-ai` library to generate a multi-chapter book. It leverages different language models (currently configured for Gemini) to perform the following steps:
