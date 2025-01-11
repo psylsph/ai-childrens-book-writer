@@ -3,16 +3,21 @@
 This project consists of two main Python scripts: `app.py` and `text-to-speech.py`.
 
 Current Best Models
-* gemini-2.0-flash-exp
-* Darkest-muse-v1-32768
-* llama-3.1-70b-versatile
-* DeekSeek v3
+* ifable_-_gemma-2-ifable-9b
+* darkest-muse-v1
+* llama-3.1-70b-versatile - via Groq
+* DeekSeek v3 - via DeepSeek API
 * llama3.1-7b
+
+Unsensor Models (No suitable for children's Content)
+* hf.co/MaziyarPanahi/Mistral-7B-Instruct-v0.3-GGUF:Q8_0, TEMP 0.7, CTX 12000
+
 
 Poor Models
 * Gemma-2-Ataraxy-32768:latest , fails length requirements
 * phi4-32768
 * alphawriter-32768
+
 
 
 Going down the list to test https://eqbench.com/creative_writing.html
