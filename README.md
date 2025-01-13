@@ -2,22 +2,28 @@
 
 This project consists of two main Python scripts: `app.py` and `text-to-speech.py`.
 
+My Hardware
+
+AMD 7700 XT 12GB - Using RocM unless fails and then use Vulkan
+AMD 7600 with 32GB DDR5 6000
+Mostly done using lm studio to allow quicker tuning of Context Size
+
 Current Best Models
+* mistral-nemo-instruct-2407 by far with 12k context window
 * ifable_-_gemma-2-ifable-9b
-* darkest-muse-v1
+* darkest-muse-v1 - OK for shorter max context 8192
 * llama-3.1-70b-versatile - via Groq
 * DeekSeek v3 - via DeepSeek API
 * llama3.1-7b
+* Quill v1, book seemed to cut off before end
 
 Unsensor Models (No suitable for children's Content)
 * hf.co/MaziyarPanahi/Mistral-7B-Instruct-v0.3-GGUF:Q8_0, TEMP 0.7, CTX 12000
 
 
 Poor Models
-* Gemma-2-Ataraxy-32768:latest , fails length requirements
-* phi4-32768
+* phi-4, Vulkan only and limited to 12000 context window and fails to generate even a plan, RocM failed to load so under Vulkan
 * alphawriter-32768
-
 
 
 Going down the list to test https://eqbench.com/creative_writing.html
